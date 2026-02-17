@@ -6,6 +6,7 @@ export const envSchema = z.object({
   HOST: z.string(),
   DATABASE_URL: z.url(),
   X_API_TOKEN: z.string(),
+  JWT_SECRET: z.string(),
 });
 
 export const getEnvField = envSchema.parse(process.env);

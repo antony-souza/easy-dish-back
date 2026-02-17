@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { SignInServiceUseCase } from "./use-case/sign-in/sign-in.usecase.js"
+import { genericResponseControllerUtil } from "../../utils/api-response.js";
 
 export const getServiceUseCase = () => {
    return {
@@ -12,5 +13,6 @@ export const signIn = async (req: Request, res: Response) => {
   const service = getServiceUseCase().signIn;
 
   const result = await service.handle(data);
-  return res.json(result);
+
+  return genericResponseControllerUtil(result, res);
 }
