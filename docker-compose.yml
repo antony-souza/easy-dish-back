@@ -1,0 +1,59 @@
+services:
+  api:
+    container_name: easy-dish-back
+    ports:
+      - "${PORT}:${PORT}"
+    env_file:
+      - .env.prod
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    restart: always
+    cpus: 0.75
+    mem_limit: 1536m
+    mem_reservation: 768m
+
+  redis:
+    container_name: easy-dish-back-cache
+    image: redis:latest
+    command: ['redis-server', '--requirepass', '${REDIS_PASSWORD}']
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend
+    restart: always
+    cpus: "0.25"
+    mem_limit: "512m"
+    mem_reservation: "256m"
+
+  rabbitmq:
+    container_name: easy-dish-back-queue
+    image: rabbitmq:4.2-management
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT}:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      - rabbitmq-logs:/var/log/rabbitmq
+    networks:
+      - backend
+    restart: always
+    cpus: "0.5"
+    mem_limit: "1g"
+    mem_reservation: "1g"
+    
+volumes:
+  redis_data:
+  rabbitmq-data:
+  rabbitmq-logs:
+
+networks:
+  backend:
+    driver: bridge
