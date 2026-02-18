@@ -2,7 +2,7 @@ import type { IUseCase } from "../../../../contracts/use-case.contract.js";
 import { CacheService } from "../../../../common/cache/cache.service.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
-import type { IRoles } from "./index.interface.js";
+import type { IRoles } from "./find-all.interface.js";
 import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
 
 export class FindAllRolesUseCase implements IUseCase<void, IRoles[]> {
@@ -28,11 +28,12 @@ export class FindAllRolesUseCase implements IUseCase<void, IRoles[]> {
                 deletedAt: null,
             },
             select: {
+                id: true,
                 name: true,
             },
         });
 
-        await redis.set(this.cacheKey, result, 60);
+        await redis.set(this.cacheKey, result);
 
         return {
             data: result,

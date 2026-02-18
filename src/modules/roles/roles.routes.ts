@@ -5,7 +5,9 @@ import { createRoleSchema } from "./use-case/create/schema/create-role.schema.js
 
 export const rolesRoutes = Router();
 
-rolesRoutes.get("/", rolesController.index);
+rolesRoutes.get("/", rolesController.findAll);
+
+rolesRoutes.get("/public", rolesController.findAllPublic);
 
 rolesRoutes.post("/",
     validationBodyMiddleware(createRoleSchema),

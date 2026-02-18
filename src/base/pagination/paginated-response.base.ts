@@ -11,7 +11,7 @@ export function BasePaginatedResponse<T>(
     return {
         page: params.page,
         perPage: params.perPage,
-        countPage,
+        countPage: countPage,
         sortBy: params.sortBy,
         sort: params.sort,
         total: countTotal,

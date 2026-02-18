@@ -7,6 +7,7 @@ export const envSchema = z.object({
   DATABASE_URL: z.url(),
   X_API_TOKEN: z.string(),
   JWT_SECRET: z.string(),
+  ORIGIN: z.string(),
   REDIS_HOST: z.string(),
   REDIS_PORT: z.string(),
   REDIS_PASSWORD: z.string(),

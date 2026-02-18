@@ -1,3 +1,4 @@
 export const cacheKeysUtils = {
-    roles: "roles-all"
+    roles: "roles-all",
+    rolesPublic: "roles-public"
 }

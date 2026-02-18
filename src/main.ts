@@ -8,7 +8,9 @@ export function main() {
 
     app.use(express.json());
 
-    app.use(cors());
+    app.use(cors({
+        origin: getEnvField.ORIGIN,
+    }));
 
     app.use('/api', apiRoutes);
 
