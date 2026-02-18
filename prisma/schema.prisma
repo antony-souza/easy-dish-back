@@ -25,22 +25,27 @@ enum PermissionTag {
   deleteUser
 }
 
+enum DeviceType {
+  desktop
+  mobile
+}
+
 model User {
-  id        String   @id @default(uuid())
-  fullName  String   @map("full_name")
-  email     String   @unique
-  phone     String?  @unique
-  cpf       String?  @unique
+  id        String    @id @default(uuid())
+  fullName  String    @map("full_name")
+  email     String    @unique
+  phone     String?   @unique
+  cpf       String?   @unique
   password  String
-  avatarUrl String?  @map("avatar_url")
-  companyId String?  @map("company_id")
-  roleId    String   @map("role_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  avatarUrl String?   @map("avatar_url")
+  companyId String?   @map("company_id")
+  roleId    String    @map("role_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  company   Company? @relation(fields: [companyId], references: [id])
-  role      Role     @relation(fields: [roleId], references: [id])
+  company Company? @relation(fields: [companyId], references: [id])
+  role    Role     @relation(fields: [roleId], references: [id])
 
   @@map("users")
 }
@@ -69,6 +74,7 @@ model Role {
   deletedAt       DateTime?        @map("deleted_at")
   users           User[]
   rolePermissions RolePermission[]
+  menuOptions     MenuOption[]
 
   @@map("roles")
 }
@@ -96,4 +102,40 @@ model RolePermission {
   deletedAt    DateTime?  @map("deleted_at")
 
   @@map("role_permissions")
+}
+
+model MenuOption {
+  id         String     @id @default(uuid())
+  title      String
+  slug       String     @unique
+  path       String
+  icon       String
+  order      Int        @default(0)
+  deviceType DeviceType @default(desktop) @map("device_type")
+  roleId     String     @map("role_id")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt @map("updated_at")
+  deletedAt  DateTime?  @map("deleted_at")
+
+  role           Role            @relation(fields: [roleId], references: [id])
+  subMenuOptions SubMenuOption[]
+
+  @@map("menu_options")
+}
+
+model SubMenuOption {
+  id           String    @id @default(uuid())
+  title        String
+  slug         String    @unique
+  path         String
+  icon         String
+  order        Int       @default(0)
+  menuOptionId String    @map("menu_option_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  deletedAt    DateTime? @map("deleted_at")
+
+  menuOption MenuOption @relation(fields: [menuOptionId], references: [id])
+
+  @@map("sub_menu_options")
 }

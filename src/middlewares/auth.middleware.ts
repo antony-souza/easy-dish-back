@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { prisma } from "../config/prisma.connect.js";
 import { getEnvField } from "../config/env.config.js";
 import type { IUserAuth } from "../_types/user-auth.type.js";
@@ -29,6 +29,7 @@ export const needAuthMiddleware = async (req: Request, res: Response, next: Next
             id: true,
             fullName: true,
             email: true,
+            roleId: true,
         },
     });
 
