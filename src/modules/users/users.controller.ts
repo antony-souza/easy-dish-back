@@ -2,11 +2,13 @@ import type { Request, Response } from "express";
 import { genericResponseControllerUtil } from "../../utils/api-response.js";
 import { FindAllUsersUseCase } from "./use-case/find/find-all.usecase.js";
 import { CreateUserUseCase } from "./use-case/create/create.usecase.js";
+import { UpdateUserUseCase } from "./use-case/update/update.usecase.js";
 
 export const getServiceUseCase = () => {
     return {
         findAll: new FindAllUsersUseCase(),
         create: new CreateUserUseCase(),
+        update: new UpdateUserUseCase(),
     }
 }
 
@@ -28,6 +30,14 @@ export const findAll = async (req: Request, res: Response) => {
 
 export const create = async (req: Request, res: Response) => {
     const service = getServiceUseCase().create;
+
+    const result = await service.handle(req.body);
+
+    return genericResponseControllerUtil(result, res);
+}
+
+export const update = async (req: Request, res: Response) => {
+    const service = getServiceUseCase().update;
 
     const result = await service.handle(req.body);
 

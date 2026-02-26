@@ -1,25 +1,26 @@
-import type { Request, Response, NextFunction } from "express";
-import { z, ZodError } from "zod";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import z from "zod";
 
-export const validationBodyMiddleware = (schema: z.ZodSchema) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
-    try {
-      schema.parse(req.body);
-      next();
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const errorMessages = error.issues.map(
-          (err) => `${err.message} ${err.path.join(".")}`
-        );
+export const validationBodyMiddleware = (
+  schema: z.ZodSchema
+): RequestHandler => {
+  return (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): void => {
+    const validationResult = schema.safeParse(req.body);
 
-        res.status(400).send({
-          message: "Informações inválidas",
-          errors: errorMessages,
-        });
-        return;
-      }
-
-      res.status(400).send(error);
+    if (!validationResult.success) {
+      res.status(400).json({
+        message: "Validation failed",
+        errors: validationResult.error.issues,
+      });
+      return;
     }
+
+    req.body = validationResult.data;
+
+    next();
   };
 };

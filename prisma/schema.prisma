@@ -46,6 +46,7 @@ model User {
 
   company Company? @relation(fields: [companyId], references: [id])
   role    Role     @relation(fields: [roleId], references: [id])
+  passwordResetTokens PasswordResetToken[]
 
   @@map("users")
 }
@@ -138,4 +139,19 @@ model SubMenuOption {
   menuOption MenuOption @relation(fields: [menuOptionId], references: [id])
 
   @@map("sub_menu_options")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  used      Boolean  @default(false)
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
 }

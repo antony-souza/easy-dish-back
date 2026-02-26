@@ -9,7 +9,7 @@ import type { ISignInResponse } from "./interfaces/sign-in.interface.js";
 
 export class SignInServiceUseCase implements IUseCase<ISignInSchema, ISignInResponse> {
 
-  async handle(data: ISignInSchema): Promise<IApiResponse<ISignInResponse>> {
+  async handle(data: ISignInSchema) {
 
     const user = await prisma.user.findUnique({
       where: {
@@ -25,7 +25,7 @@ export class SignInServiceUseCase implements IUseCase<ISignInSchema, ISignInResp
 
     if (!user) {
       return {
-        data: [],
+        data: null,
         message: "Usuário não encontrado",
         statusCode: 404,
         errors: ["Usuário não encontrado"],
@@ -36,7 +36,7 @@ export class SignInServiceUseCase implements IUseCase<ISignInSchema, ISignInResp
 
     if (!isPasswordValid) {
       return {
-        data: [],
+        data: null,
         message: "Credenciais inválidas",
         statusCode: 401,
         errors: ["Credenciais inválidas"],

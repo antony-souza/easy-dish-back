@@ -1,0 +1,17 @@
+src/modules/auth/use-case/reset-password/reset-password.usecase.ts(10,9): error TS2416: Property 'handle' in type 'ResetPasswordServiceUseCase' is not assignable to the same property in base type 'IUseCase<{ token: string; password: string; }, null>'.
+  Type '(data: { token: string; password: string; }) => Promise<{ data: never[]; message: string; statusCode: number; errors: string[]; } | { data: null; message: string; statusCode: number; errors: never[]; }>' is not assignable to type '(data: { token: string; password: string; }) => Promise<IApiResponse<null>>'.
+    Type 'Promise<{ data: never[]; message: string; statusCode: number; errors: string[]; } | { data: null; message: string; statusCode: number; errors: never[]; }>' is not assignable to type 'Promise<IApiResponse<null>>'.
+      Type '{ data: never[]; message: string; statusCode: number; errors: string[]; } | { data: null; message: string; statusCode: number; errors: never[]; }' is not assignable to type 'IApiResponse<null>'.
+        Type '{ data: never[]; message: string; statusCode: number; errors: string[]; }' is not assignable to type 'IApiResponse<null>'.
+          Types of property 'data' are incompatible.
+            Type 'never[]' is not assignable to type '[]'.
+              Target allows only 0 element(s) but source may have more.
+src/modules/auth/use-case/sign-in/sign-in.usecase.ts(12,9): error TS2416: Property 'handle' in type 'SignInServiceUseCase' is not assignable to the same property in base type 'IUseCase<{ email: string; password: string; }, ISignInResponse>'.
+  Type '(data: { email: string; password: string; }) => Promise<{ data: never[]; message: string; statusCode: number; errors: string[]; } | { data: { token: string; }; message: string; statusCode: number; errors: never[]; }>' is not assignable to type '(data: { email: string; password: string; }) => Promise<IApiResponse<ISignInResponse>>'.
+    Type 'Promise<{ data: never[]; message: string; statusCode: number; errors: string[]; } | { data: { token: string; }; message: string; statusCode: number; errors: never[]; }>' is not assignable to type 'Promise<IApiResponse<ISignInResponse>>'.
+      Type '{ data: never[]; message: string; statusCode: number; errors: string[]; } | { data: { token: string; }; message: string; statusCode: number; errors: never[]; }' is not assignable to type 'IApiResponse<ISignInResponse>'.
+        Type '{ data: never[]; message: string; statusCode: number; errors: string[]; }' is not assignable to type 'IApiResponse<ISignInResponse>'.
+          Types of property 'data' are incompatible.
+            Type 'never[]' is not assignable to type '[] | ISignInResponse'.
+              Type 'never[]' is not assignable to type '[]'.
+                Target allows only 0 element(s) but source may have more.
