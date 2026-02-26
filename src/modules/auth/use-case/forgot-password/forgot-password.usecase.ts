@@ -6,9 +6,6 @@ import type { IUseCase } from "../../../../contracts/use-case.contract.js";
 import { SmtpService } from "../../../../common/smtp/smtp.service.js";
 
 export class ForgotPasswordServiceUseCase implements IUseCase<IForgotPasswordSchema, null> {
-  constructor(
-    private readonly smtpService: SmtpService,
-  ) { }
 
   async handle(data: IForgotPasswordSchema) {
     const user = await prisma.user.findUnique({
@@ -19,17 +16,27 @@ export class ForgotPasswordServiceUseCase implements IUseCase<IForgotPasswordSch
     if (!user) {
       return {
         data: null,
-        message: "Se o e-mail existir, um link de recuperação foi enviado.",
-        statusCode: 200,
-        errors: [],
+        message: "Usuário não encontrado",
+        statusCode: 404,
+        errors: ["Usuário não encontrado"],
       };
     }
 
-    const resetToken = jwt.sign(
+    const resetToken = await jwt.sign(
       { userId: user.id },
       getEnvField.JWT_SECRET,
       { expiresIn: "15m" }
     );
+
+    const resetLink = `${getEnvField.FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+    const smtpService = new SmtpService();
+
+    await smtpService.sendMail({
+      to: user.email,
+      subject: "Recuperação de senha",
+      text: `Clique no link para recuperar sua senha: ${resetLink}`,
+    });
 
     await prisma.passwordResetToken.create({
       data: {
@@ -37,14 +44,6 @@ export class ForgotPasswordServiceUseCase implements IUseCase<IForgotPasswordSch
         userId: user.id,
         expiresAt: new Date(Date.now() + 15 * 60 * 1000), // 15m
       },
-    });
-
-    const resetLink = `${getEnvField.FRONTEND_URL}/reset-password?token=${resetToken}`;
-
-    await this.smtpService.sendMail({
-      to: user.email,
-      subject: "Recuperação de senha",
-      text: `Clique no link para recuperar sua senha: ${resetLink}`,
     });
 
     return {

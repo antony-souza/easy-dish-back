@@ -13,9 +13,9 @@ export class ResetPasswordServiceUseCase implements IUseCase<IResetPasswordSchem
       if (!decoded || !decoded.userId) {
         return {
           data: null,
-          message: "Token inválido ou expirado",
+          message: "Link inválido ou expirado",
           statusCode: 400,
-          errors: ["Token inválido ou expirado"],
+          errors: ["Link inválido ou expirado"],
         };
       }
 
@@ -26,9 +26,9 @@ export class ResetPasswordServiceUseCase implements IUseCase<IResetPasswordSchem
       if (!resetTokenRecord || resetTokenRecord.used || resetTokenRecord.expiresAt < new Date()) {
         return {
           data: null,
-          message: "Token inválido ou já utilizado",
+          message: "Link inválido ou já utilizado",
           statusCode: 400,
-          errors: ["Token inválido ou já utilizado"],
+          errors: ["Link inválido ou já utilizado"],
         };
       }
 
@@ -73,9 +73,9 @@ export class ResetPasswordServiceUseCase implements IUseCase<IResetPasswordSchem
     } catch {
       return {
         data: null,
-        message: "Token inválido ou expirado",
+        message: "Link inválido ou expirado",
         statusCode: 400,
-        errors: ["Token inválido ou expirado"],
+        errors: ["Link inválido ou expirado"],
       };
     }
   }
