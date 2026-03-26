@@ -4,9 +4,11 @@ import { validationBodyMiddleware } from "../../middlewares/validate-body.middle
 import { createUserSchema } from "./use-case/create/schema/create.schema.js";
 import { updateUserSchema } from "./use-case/update/schema/update.schema.js";
 
+import { needAuthMiddleware } from "../../middlewares/auth.middleware.js";
+
 export const usersRoutes = Router();
 
-usersRoutes.get("/", usersController.findAll);
+usersRoutes.get("/", needAuthMiddleware, usersController.findAll);
 
 usersRoutes.post("/",
     validationBodyMiddleware(createUserSchema),
@@ -14,6 +16,7 @@ usersRoutes.post("/",
 );
 
 usersRoutes.put("/",
+    needAuthMiddleware,
     validationBodyMiddleware(updateUserSchema),
     usersController.update
 );

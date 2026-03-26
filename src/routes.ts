@@ -10,8 +10,8 @@ export const apiRoutes = Router();
 
 apiRoutes.use(ApiTokenMiddleware);
 apiRoutes.use('/auth', authRoutes);
-
-apiRoutes.use(needAuthMiddleware)
 apiRoutes.use('/roles', rolesRoutes);
 apiRoutes.use('/users', usersRoutes);
+
+apiRoutes.use(needAuthMiddleware)
 apiRoutes.use('/menu-options', menuOptionsRoutes);

@@ -19,7 +19,14 @@ export const needAuthMiddleware = async (req: Request, res: Response, next: Next
         return
     }
 
-    const userDecoded = jwt.verify(token, getEnvField.JWT_SECRET) as { user: IUserAuth }
+    let userDecoded: { user: IUserAuth };
+    
+    try {
+        userDecoded = jwt.verify(token, getEnvField.JWT_SECRET) as { user: IUserAuth }
+    } catch {
+        res.status(401).send({ message: "Sessão expirada. Por favor, faça login novamente." });
+        return;
+    }
 
     const userFound = await prisma.user.findUnique({
         where: {
