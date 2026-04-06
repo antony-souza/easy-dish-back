@@ -1,19 +1,19 @@
 services:
-  api:
-    container_name: easy-dish-back
-    ports:
-      - "${PORT}:${PORT}"
-    env_file:
-      - .env.prod
-    build:
-      context: .
-      dockerfile: Dockerfile
-    networks:
-      - backend
-    restart: always
-    cpus: 0.75
-    mem_limit: 1536m
-    mem_reservation: 768m
+  # api:
+  #   container_name: easy-dish-back
+  #   ports:
+  #     - "${PORT}:${PORT}"
+  #   env_file:
+  #     - .env.prod
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   networks:
+  #     - backend
+  #   restart: always
+  #   cpus: 0.75
+  #   mem_limit: 1536m
+  #   mem_reservation: 768m
 
   redis:
     container_name: easy-dish-back-cache

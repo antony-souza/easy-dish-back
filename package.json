@@ -1,7 +1,8 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
+    "dev": "env-cmd -f .env tsx watch src/main.ts",
+    "prod": "env-cmd -f .env.prod tsx watch src/main.ts",
     "build": "tsc && npx prisma generate",
     "start": "node dist/main.js"
   },
@@ -11,6 +12,7 @@
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
+    "env-cmd": "^11.0.0",
     "express": "^5.2.1",
     "ioredis": "^5.9.3",
     "jsonwebtoken": "^9.0.3",
