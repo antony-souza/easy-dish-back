@@ -8,6 +8,11 @@ import { needAuthMiddleware } from "../../middlewares/auth.middleware.js";
 
 export const usersRoutes = Router();
 
+usersRoutes.get("/my-info",
+    needAuthMiddleware,
+    usersController.myInfo
+);
+
 usersRoutes.get("/", needAuthMiddleware, usersController.findAll);
 
 usersRoutes.post("/",

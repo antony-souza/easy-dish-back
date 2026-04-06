@@ -18,6 +18,11 @@ export const envSchema = z.object({
   SMTP_USER: z.string(),
   SMTP_PASS: z.string(),
   BCRYPT_SALT: z.string(),
+  R2_ACCOUNT_ID: z.string(),
+  R2_ACCESS_KEY_ID: z.string(),
+  R2_SECRET_ACCESS_KEY: z.string(),
+  R2_BUCKET_NAME: z.string(),
+  R2_PUBLIC_URL: z.string(),
 });
 
 export const getEnvField = envSchema.parse(process.env);

@@ -37,9 +37,13 @@ export class FindAllUsersUseCase
                 email: true,
                 phone: true,
                 cpf: true,
+                role:{
+                    select: {
+                        name: true,
+                    }
+                },
                 company: {
                     select: {
-                        id: true,
                         tradeName: true,
                         cnpj: true,
                     }

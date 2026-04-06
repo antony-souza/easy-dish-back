@@ -29,7 +29,13 @@ export class MyInfoUseCase implements IUseCase<string, IMyInfoUseCaseResponse> {
                 fullName: true,
                 email: true,
                 phone: true,
+                avatarUrl: true,
                 cpf: true,
+                role: {
+                    select: {
+                        name: true,
+                    }
+                },
                 company: {
                     select: {
                         id: true,
