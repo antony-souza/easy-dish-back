@@ -3,6 +3,7 @@ import * as usersController from "./users.controller.js";
 import { validationBodyMiddleware } from "../../middlewares/validate-body.middleware.js";
 import { createUserSchema } from "./use-case/create/schema/create.schema.js";
 import { updateUserSchema } from "./use-case/update/schema/update.schema.js";
+import { multerUpload } from "../../config/multer.config.js";
 
 import { needAuthMiddleware } from "../../middlewares/auth.middleware.js";
 
@@ -20,8 +21,17 @@ usersRoutes.post("/",
     usersController.create
 );
 
-usersRoutes.put("/",
+usersRoutes.put("/:id",
     needAuthMiddleware,
+    multerUpload.single("avatar"),
+    (req, res, next) => {
+        req.body = {
+            ...req.body,
+            userId: req.params.id,
+        };
+
+        next();
+    },
     validationBodyMiddleware(updateUserSchema),
     usersController.update
 );

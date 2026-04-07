@@ -8,6 +8,7 @@ export const updateUserSchema = z.object({
     cpf: z.string().optional(),
     cnpj:z.string().optional(),
     companyId: z.uuid().optional(),
+    avatar: z.custom<Express.Multer.File>().optional(),
 });
 
 export type UpdateUserDto = z.infer<typeof updateUserSchema>;

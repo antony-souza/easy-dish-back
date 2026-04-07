@@ -41,7 +41,10 @@ export const create = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
     const service = getServiceUseCase().update;
 
-    const result = await service.handle(req.body);
+    const result = await service.handle({
+        ...req.body,
+        avatar: req.file,
+    });
 
     return genericResponseControllerUtil(result, res);
 }

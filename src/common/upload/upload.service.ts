@@ -22,9 +22,7 @@ export class UploadService {
             contentType: file.mimetype,
         });
 
-        const url = `https://${getEnvField.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${key}`;
-
-        console.log(url);
+        const url = `${getEnvField.R2_PUBLIC_URL}/${key}`;
 
         return {
             url: url

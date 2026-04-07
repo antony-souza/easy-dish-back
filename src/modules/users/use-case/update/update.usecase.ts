@@ -2,6 +2,7 @@ import type { IUseCase } from "../../../../contracts/use-case.contract.js";
 import type { UpdateUserDto } from "./schema/update.schema.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
+import { uploadService } from "../../../../common/upload/upload.service.js";
 
 interface IUpdateUserUseCaseResponse {
     id: string;
@@ -45,6 +46,12 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserDto, IUpdateUserUse
             }
         }
 
+        let avatarUrl: string | null = null;
+
+        if(dto.avatar) {
+            avatarUrl = (await uploadService.uploadFile(dto.avatar, "avatars")).url;
+        }
+
         await prisma.$transaction(async (tx) => {
             const user = await tx.user.update({
                 where: {
@@ -56,6 +63,7 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserDto, IUpdateUserUse
                     phone: dto.phone || null,
                     cpf: dto.cpf || null,
                     companyId: dto.companyId || null,
+                    avatarUrl: avatarUrl,
                 },
                 select: {
                     id: true,
