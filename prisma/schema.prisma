@@ -30,6 +30,17 @@ enum DeviceType {
   mobile
 }
 
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+}
+
+enum StockMovementType {
+  IN
+  OUT
+}
+
 model User {
   id        String    @id @default(uuid())
   fullName  String    @map("full_name")
@@ -44,23 +55,27 @@ model User {
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
-  company Company? @relation(fields: [companyId], references: [id])
-  role    Role     @relation(fields: [roleId], references: [id])
+  company             Company?             @relation(fields: [companyId], references: [id])
+  role                Role                 @relation(fields: [roleId], references: [id])
   passwordResetTokens PasswordResetToken[]
+  orders              Order[]
+  stockMovements      StockMovement[]
 
   @@map("users")
 }
 
 model Company {
-  id        String    @id @default(uuid())
-  legalName String?   @map("legal_name")
-  tradeName String    @map("trade_name")
-  cnpj      String    @unique
-  logoUrl   String?   @map("logo_url")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
-  users     User[]
+  id             String          @id @default(uuid())
+  legalName      String?         @map("legal_name")
+  tradeName      String          @map("trade_name")
+  cnpj           String          @unique
+  logoUrl        String?         @map("logo_url")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  deletedAt      DateTime?       @map("deleted_at")
+  users          User[]
+  categories     Category[]
+  stockMovements StockMovement[]
 
   @@map("companies")
 }
@@ -106,18 +121,17 @@ model RolePermission {
 }
 
 model MenuOption {
-  id         String     @id @default(uuid())
-  title      String
-  slug       String     @unique
-  path       String
-  icon       String
-  order      Int        @default(0)
-  deviceType DeviceType @default(desktop) @map("device_type")
-  roleId     String     @map("role_id")
-  createdAt  DateTime   @default(now()) @map("created_at")
-  updatedAt  DateTime   @updatedAt @map("updated_at")
-  deletedAt  DateTime?  @map("deleted_at")
-
+  id             String          @id @default(uuid())
+  title          String
+  slug           String          @unique
+  path           String
+  icon           String
+  order          Int             @default(0)
+  deviceType     DeviceType      @default(desktop) @map("device_type")
+  roleId         String          @map("role_id")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  deletedAt      DateTime?       @map("deleted_at")
   role           Role            @relation(fields: [roleId], references: [id])
   subMenuOptions SubMenuOption[]
 
@@ -125,33 +139,109 @@ model MenuOption {
 }
 
 model SubMenuOption {
-  id           String    @id @default(uuid())
+  id           String     @id @default(uuid())
   title        String
-  slug         String    @unique
+  slug         String     @unique
   path         String
   icon         String
-  order        Int       @default(0)
-  menuOptionId String    @map("menu_option_id")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
-  deletedAt    DateTime? @map("deleted_at")
-
-  menuOption MenuOption @relation(fields: [menuOptionId], references: [id])
+  order        Int        @default(0)
+  menuOptionId String     @map("menu_option_id")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  deletedAt    DateTime?  @map("deleted_at")
+  menuOption   MenuOption @relation(fields: [menuOptionId], references: [id])
 
   @@map("sub_menu_options")
 }
 
 model PasswordResetToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
-  userId    String   @map("user_id")
-  used      Boolean  @default(false)
-  expiresAt DateTime @map("expires_at")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String    @id @default(uuid())
+  token     String    @unique
+  userId    String    @map("user_id")
+  used      Boolean   @default(false)
+  expiresAt DateTime  @map("expires_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
-
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("password_reset_tokens")
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  tag       String    @unique
+  companyId String    @map("company_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  company   Company   @relation(fields: [companyId], references: [id])
+  products  Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id             String          @id @default(uuid())
+  name           String
+  tag            String          @unique
+  price          Float           @default(0)
+  stock          Int             @default(0)
+  categoryId     String          @map("category_id")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  deletedAt      DateTime?       @map("deleted_at")
+  category       Category        @relation(fields: [categoryId], references: [id])
+  stockMovements StockMovement[]
+  orderItems     OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id             String          @id @default(uuid())
+  tableNumber    Int?
+  customerName   String?
+  status         OrderStatus     @default(PENDING)
+  total          Float           @default(0)
+  createByUserId String          @map("created_by_user_id")
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  deletedAt      DateTime?       @map("deleted_at")
+  createBy       User            @relation(fields: [createByUserId], references: [id])
+  items          OrderItem[]
+  stockMovements StockMovement[]
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String  @map("order_id")
+  productId String  @map("product_id")
+  quantity  Int     @default(0)
+  price     Float   @default(0)
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model StockMovement {
+  id        String            @id @default(uuid())
+  companyId String            @map("company_id")
+  productId String            @map("product_id")
+  quantity  Int               @default(0)
+  type      StockMovementType @default(IN)
+  userId    String            @map("user_id")
+  orderId   String            @map("order_id")
+  reason    String
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+  deletedAt DateTime?         @map("deleted_at")
+  product   Product           @relation(fields: [productId], references: [id])
+  user      User              @relation(fields: [userId], references: [id])
+  order     Order             @relation(fields: [orderId], references: [id])
+  company   Company           @relation(fields: [companyId], references: [id])
+
+  @@map("stock_movements")
 }
