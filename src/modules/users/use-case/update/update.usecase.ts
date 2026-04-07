@@ -3,20 +3,28 @@ import type { UpdateUserDto } from "./schema/update.schema.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
 import { uploadService } from "../../../../common/upload/upload.service.js";
+import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
+import { CacheService } from "../../../../common/cache/cache.service.js";
 
 interface IUpdateUserUseCaseResponse {
     id: string;
 }
 
 export class UpdateUserUseCase implements IUseCase<UpdateUserDto, IUpdateUserUseCaseResponse> {
+    private cacheKey = cacheKeysUtils.myInfo;
 
     async handle(dto: UpdateUserDto): Promise<IApiResponse<IUpdateUserUseCaseResponse>> {
+        const cache = new CacheService();
 
-        const existsUser = await prisma.user.count({
+        const existsUser = await prisma.user.findUnique({
             where: {
                 id: dto.userId,
                 deletedAt: null,
             },
+            select: {
+                id: true,
+                avatarUrl: true,
+            }
         });
 
         if (!existsUser) {
@@ -46,9 +54,9 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserDto, IUpdateUserUse
             }
         }
 
-        let avatarUrl: string | null = null;
+        let avatarUrl: string | null = existsUser.avatarUrl;
 
-        if(dto.avatar) {
+        if (dto.avatar) {
             avatarUrl = (await uploadService.uploadFile(dto.avatar, "avatars")).url;
         }
 
@@ -90,6 +98,8 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserDto, IUpdateUserUse
 
             return;
         });
+
+        await cache.del(`${this.cacheKey}-${dto.userId}`);
 
         return {
             data: [],
