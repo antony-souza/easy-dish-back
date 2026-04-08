@@ -24,14 +24,6 @@ usersRoutes.post("/",
 usersRoutes.put("/:id",
     needAuthMiddleware,
     multerUpload.single("avatar"),
-    (req, res, next) => {
-        req.body = {
-            ...req.body,
-            userId: req.params.id,
-        };
-
-        next();
-    },
     validationBodyMiddleware(updateUserSchema),
     usersController.update
 );

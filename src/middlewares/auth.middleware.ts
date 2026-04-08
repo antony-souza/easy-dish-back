@@ -37,6 +37,7 @@ export const needAuthMiddleware = async (req: Request, res: Response, next: Next
             fullName: true,
             email: true,
             roleId: true,
+            companyId: true,
         },
     });
 

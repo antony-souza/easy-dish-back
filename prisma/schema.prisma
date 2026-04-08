@@ -76,6 +76,9 @@ model Company {
   users          User[]
   categories     Category[]
   stockMovements StockMovement[]
+  products       Product[]
+  orders         Order[]
+  orderItems     OrderItem[]
 
   @@map("companies")
 }
@@ -173,6 +176,7 @@ model Category {
   name      String
   tag       String    @unique
   companyId String    @map("company_id")
+  imageUrl  String?   @map("image_url")
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -189,12 +193,15 @@ model Product {
   price          Float           @default(0)
   stock          Int             @default(0)
   categoryId     String          @map("category_id")
+  companyId      String          @map("company_id")
+  imageUrl       String?         @map("image_url")
   createdAt      DateTime        @default(now()) @map("created_at")
   updatedAt      DateTime        @updatedAt @map("updated_at")
   deletedAt      DateTime?       @map("deleted_at")
   category       Category        @relation(fields: [categoryId], references: [id])
   stockMovements StockMovement[]
   orderItems     OrderItem[]
+  company        Company         @relation(fields: [companyId], references: [id])
 
   @@map("products")
 }
@@ -206,22 +213,29 @@ model Order {
   status         OrderStatus     @default(PENDING)
   total          Float           @default(0)
   createByUserId String          @map("created_by_user_id")
+  companyId      String          @map("company_id")
   createdAt      DateTime        @default(now()) @map("created_at")
   updatedAt      DateTime        @updatedAt @map("updated_at")
   deletedAt      DateTime?       @map("deleted_at")
   createBy       User            @relation(fields: [createByUserId], references: [id])
   items          OrderItem[]
   stockMovements StockMovement[]
+  company        Company         @relation(fields: [companyId], references: [id])
 }
 
 model OrderItem {
-  id        String  @id @default(uuid())
-  orderId   String  @map("order_id")
-  productId String  @map("product_id")
-  quantity  Int     @default(0)
-  price     Float   @default(0)
-  order     Order   @relation(fields: [orderId], references: [id])
-  product   Product @relation(fields: [productId], references: [id])
+  id        String    @id @default(uuid())
+  orderId   String    @map("order_id")
+  productId String    @map("product_id")
+  quantity  Int       @default(0)
+  price     Float     @default(0)
+  companyId String    @map("company_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+  company   Company   @relation(fields: [companyId], references: [id])
+  order     Order     @relation(fields: [orderId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
 
   @@map("order_items")
 }

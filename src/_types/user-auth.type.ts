@@ -3,4 +3,5 @@ export interface IUserAuth {
     fullName: string;
     email: string;
     roleId: string;
+    companyId: string;
 }

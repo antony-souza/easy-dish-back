@@ -3,13 +3,13 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { getEnvField } from "../../../../config/env.config.js";
 import { prisma } from "../../../../config/prisma.connect.js";
-import { type IApiResponse } from "../../../../utils/api-response.js";
 import type { IUseCase } from "../../../../contracts/use-case.contract.js";
 import type { ISignInResponse } from "./interfaces/sign-in.interface.js";
+import type { IApiResponse } from "../../../../utils/api-response.js";
 
 export class SignInServiceUseCase implements IUseCase<ISignInSchema, ISignInResponse> {
 
-  async handle(data: ISignInSchema) {
+  async handle(data: ISignInSchema): Promise<IApiResponse<ISignInResponse>> {
 
     const user = await prisma.user.findUnique({
       where: {
@@ -25,7 +25,7 @@ export class SignInServiceUseCase implements IUseCase<ISignInSchema, ISignInResp
 
     if (!user) {
       return {
-        data: null,
+        data: [],
         message: "Usuário não encontrado",
         statusCode: 404,
         errors: ["Usuário não encontrado"],
@@ -36,7 +36,7 @@ export class SignInServiceUseCase implements IUseCase<ISignInSchema, ISignInResp
 
     if (!isPasswordValid) {
       return {
-        data: null,
+        data: [],
         message: "Credenciais inválidas",
         statusCode: 401,
         errors: ["Credenciais inválidas"],

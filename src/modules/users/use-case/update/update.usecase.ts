@@ -13,12 +13,12 @@ interface IUpdateUserUseCaseResponse {
 export class UpdateUserUseCase implements IUseCase<UpdateUserDto, IUpdateUserUseCaseResponse> {
     private cacheKey = cacheKeysUtils.myInfo;
 
-    async handle(dto: UpdateUserDto): Promise<IApiResponse<IUpdateUserUseCaseResponse>> {
+    async handleWithId(userId: string, dto: UpdateUserDto): Promise<IApiResponse<IUpdateUserUseCaseResponse>> {
         const cache = new CacheService();
 
         const existsUser = await prisma.user.findUnique({
             where: {
-                id: dto.userId,
+                id: userId,
                 deletedAt: null,
             },
             select: {
@@ -63,7 +63,7 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserDto, IUpdateUserUse
         await prisma.$transaction(async (tx) => {
             const user = await tx.user.update({
                 where: {
-                    id: dto.userId,
+                    id: userId,
                 },
                 data: {
                     fullName: dto.fullName,
