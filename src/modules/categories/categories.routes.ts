@@ -20,3 +20,5 @@ categoriesRoutes.put("/:id",
     validationBodyMiddleware(updateCategorySchema),
     categoriesController.update
 );
+
+categoriesRoutes.delete("/:id", categoriesController.softDelete);
