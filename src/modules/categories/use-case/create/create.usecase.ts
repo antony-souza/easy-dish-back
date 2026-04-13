@@ -6,11 +6,11 @@ import type { CreateCategoryDto } from "./schema/create.schema.js";
 import { uploadService } from "../../../../common/upload/upload.service.js";
 
 export class CreateCategoryUseCase implements IUseCase<CreateCategoryDto, Category> {
-    async handle(dto: CreateCategoryDto): Promise<IApiResponse<Category>> {
+    async handleWithId(companyId: string, dto: CreateCategoryDto): Promise<IApiResponse<Category>> {
 
         const existsCompany = await prisma.company.count({
             where: {
-                id: dto.companyId,
+                id: companyId,
                 deletedAt: null,
             },
         });
@@ -51,7 +51,7 @@ export class CreateCategoryUseCase implements IUseCase<CreateCategoryDto, Catego
                 name: dto.name,
                 tag: dto.tag,
                 imageUrl: imageUrl,
-                companyId: dto.companyId,
+                companyId: companyId,
             },
         });
 

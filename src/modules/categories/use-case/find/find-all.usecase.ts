@@ -13,13 +13,15 @@ export class FindAllCategoriesUseCase
         >
     > {
 
-    async handle(
+    async handleWithId(
+        companyId: string,
         params: IBasePaginatedParams
     ): Promise<IApiResponse<IBasePaginatedResponse<IFindAllCategoriesUseCaseResponse>>> {
 
         const countTotal = await prisma.category.count({
             where: {
                 deletedAt: null,
+                companyId: companyId,
                 ...params.query
             },
         });
@@ -29,6 +31,7 @@ export class FindAllCategoriesUseCase
         const items = await prisma.category.findMany({
             where: {
                 deletedAt: null,
+                companyId: companyId,
                 ...params.query
             },
             select: {

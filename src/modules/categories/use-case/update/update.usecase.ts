@@ -8,14 +8,18 @@ interface IUpdateCategoryUseCaseResponse {
     id: string;
 }
 
+export interface IUpdateCategoryIdsParamsUseCase {
+    categoryId: string;
+    companyId: string;
+}
 export class UpdateCategoryUseCase implements IUseCase<UpdateCategoryDto, IUpdateCategoryUseCaseResponse> {
-    async handleWithId(categoryId: string, dto: UpdateCategoryDto): Promise<IApiResponse<IUpdateCategoryUseCaseResponse>> {
+    async handleWithIds(paramsIds: IUpdateCategoryIdsParamsUseCase, dto: UpdateCategoryDto): Promise<IApiResponse<IUpdateCategoryUseCaseResponse>> {
 
         const existsCategory = await prisma.category.findUnique({
             where: {
-                id: categoryId,
+                id: paramsIds.categoryId,
                 tag: dto.tag,
-                companyId: dto.companyId,
+                companyId: paramsIds.companyId,
                 deletedAt: null,
             },
             select: {
@@ -41,13 +45,13 @@ export class UpdateCategoryUseCase implements IUseCase<UpdateCategoryDto, IUpdat
 
         const category = await prisma.category.update({
             where: {
-                id: categoryId,
+                id: paramsIds.categoryId,
             },
             data: {
                 name: dto.name,
                 tag: dto.tag,
                 imageUrl: imageUrl,
-                companyId: dto.companyId,
+                companyId: paramsIds.companyId,
             },
             select: {
                 id: true,
