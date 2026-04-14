@@ -7,6 +7,7 @@ import { menuOptionsRoutes } from './modules/menu-options/menu-options.routes.js
 import { needAuthMiddleware } from './middlewares/auth.middleware.js';
 import { categoriesRoutes } from './modules/categories/categories.routes.js';
 import { productsRoutes } from './modules/products/products.routes.js';
+import { paymentRoutes } from './modules/payment/payment.routes.js';
 
 export const apiRoutes = Router();
 
@@ -19,3 +20,4 @@ apiRoutes.use(needAuthMiddleware)
 apiRoutes.use('/categories', categoriesRoutes);
 apiRoutes.use('/products', productsRoutes);
 apiRoutes.use('/menu-options', menuOptionsRoutes);
+apiRoutes.use('/payment', paymentRoutes);
