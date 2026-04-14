@@ -12,6 +12,7 @@ export const envSchema = z.object({
   REDIS_PORT: z.string(),
   REDIS_PASSWORD: z.string(),
   REDIS_DB: z.string(),
+  MERCADOPAGO_ACCESS_TOKEN: z.string(),
   SMTP_HOST: z.string(),
   SMTP_PORT: z.string(),
   SMTP_SECURE: z.string(),
