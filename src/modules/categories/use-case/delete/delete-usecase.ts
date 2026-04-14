@@ -1,14 +1,23 @@
 import { prisma } from "../../../../config/prisma.connect.js";
 import type { IUseCase } from "../../../../contracts/use-case.contract.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
+import { CacheService } from "../../../../common/cache/cache.service.js";
+import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
 
 export class DeleteCategoryUseCase implements IUseCase<string, null> {
-    async handleWithId(id: string): Promise<IApiResponse<null>> {
+    private cacheKey = cacheKeysUtils.categoriesAll;
 
-        const existsCategory = await prisma.category.count({
+    async handleWithId(id: string): Promise<IApiResponse<null>> {
+        const cache = new CacheService();
+
+        const existsCategory = await prisma.category.findFirst({
             where: {
                 id: id,
                 deletedAt: null,
+            },
+            select: {
+                id: true,
+                companyId: true,
             },
         });
 
@@ -29,6 +38,8 @@ export class DeleteCategoryUseCase implements IUseCase<string, null> {
                 deletedAt: new Date(),
             },
         });
+
+        await cache.del(`${this.cacheKey}:${existsCategory.companyId}`);
 
         return {
             data: null,

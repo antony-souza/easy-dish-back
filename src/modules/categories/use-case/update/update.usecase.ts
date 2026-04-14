@@ -3,6 +3,8 @@ import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
 import type { UpdateCategoryDto } from "./schema/update.schema.js";
 import { uploadService } from "../../../../common/upload/upload.service.js";
+import { CacheService } from "../../../../common/cache/cache.service.js";
+import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
 
 interface IUpdateCategoryUseCaseResponse {
     id: string;
@@ -13,7 +15,10 @@ export interface IUpdateCategoryIdsParamsUseCase {
     companyId: string;
 }
 export class UpdateCategoryUseCase implements IUseCase<UpdateCategoryDto, IUpdateCategoryUseCaseResponse> {
+    private cacheKey = cacheKeysUtils.categoriesAll;
+
     async handleWithIds(paramsIds: IUpdateCategoryIdsParamsUseCase, dto: UpdateCategoryDto): Promise<IApiResponse<IUpdateCategoryUseCaseResponse>> {
+        const cache = new CacheService();
 
         const existsCategory = await prisma.category.findUnique({
             where: {
@@ -57,6 +62,8 @@ export class UpdateCategoryUseCase implements IUseCase<UpdateCategoryDto, IUpdat
                 id: true,
             },
         });
+
+        await cache.del(`${this.cacheKey}:${paramsIds.companyId}`);
 
         return {
             data: category,

@@ -8,6 +8,7 @@ import { multerUpload } from "../../config/multer.config.js";
 export const categoriesRoutes = Router();
 
 categoriesRoutes.get("/", categoriesController.findAll);
+categoriesRoutes.get("/all", categoriesController.findAllCached);
 
 categoriesRoutes.post("/",
     multerUpload.single("photo"),

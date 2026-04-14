@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { genericResponseControllerUtil } from "../../utils/api-response.js";
 import { FindAllCategoriesUseCase } from "./use-case/find/find-all.usecase.js";
+import { FindAllCategoriesCachedUseCase } from "./use-case/find/find-all-cached.usecase.js";
 import { CreateCategoryUseCase } from "./use-case/create/create.usecase.js";
 import { UpdateCategoryUseCase, type IUpdateCategoryIdsParamsUseCase } from "./use-case/update/update.usecase.js";
 import { DeleteCategoryUseCase } from "./use-case/delete/delete-usecase.js";
@@ -8,6 +9,7 @@ import { DeleteCategoryUseCase } from "./use-case/delete/delete-usecase.js";
 export const getServiceUseCase = () => {
     return {
         findAll: new FindAllCategoriesUseCase(),
+        findAllCached: new FindAllCategoriesCachedUseCase(),
         create: new CreateCategoryUseCase(),
         update: new UpdateCategoryUseCase(),
         delete: new DeleteCategoryUseCase(),
@@ -26,6 +28,14 @@ export const findAll = async (req: Request, res: Response) => {
         sort: sort as string || "desc",
         query: rest as Record<string, unknown>,
     });
+
+    return genericResponseControllerUtil(result, res);
+}
+
+export const findAllCached = async (req: Request, res: Response) => {
+    const service = getServiceUseCase().findAllCached;
+
+    const result = await service.handleWithId(req.user?.companyId as string);
 
     return genericResponseControllerUtil(result, res);
 }

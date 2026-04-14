@@ -34,6 +34,7 @@ export class FindAllProductsUseCase
             select: {
                 id: true,
                 name: true,
+                description: true,
                 tag: true,
                 imageUrl: true,
                 price: true,

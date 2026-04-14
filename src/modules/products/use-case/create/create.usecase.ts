@@ -50,11 +50,13 @@ export class CreateProductUseCase implements IUseCase<CreateProductDto, Product>
         const product = await prisma.product.create({
             data: {
                 name: dto.name,
+                description: dto.description,
                 tag: dto.tag,
                 imageUrl: imageUrl,
                 price: dto.price,
                 stock: dto.stock,
                 categoryId: dto.categoryId,
+                companyId: companyId,
             },
         });
 

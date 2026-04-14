@@ -1,6 +1,7 @@
 export interface IFindAllProductsUseCaseResponse {
     id: string;
     name: string;
+    description: string;
     tag: string;
     price: number;
     stock: number;

@@ -3,12 +3,14 @@ import { genericResponseControllerUtil } from "../../utils/api-response.js";
 import { FindAllProductsUseCase } from "./use-case/find/find-all.usecase.js";
 import { CreateProductUseCase } from "./use-case/create/create.usecase.js";
 import { UpdateProductUseCase } from "./use-case/update/update.usecase.js";
+import { DeleteProductUseCase } from "./use-case/delete/delete-usecase.js";
 
 export const getServiceUseCase = () => {
     return {
         findAll: new FindAllProductsUseCase(),
         create: new CreateProductUseCase(),
         update: new UpdateProductUseCase(),
+        delete: new DeleteProductUseCase(),
     }
 }
 
@@ -51,3 +53,13 @@ export const update = async (req: Request, res: Response) => {
 
     return genericResponseControllerUtil(result, res);
 }
+
+export const softDelete = async (req: Request, res: Response) => {
+    const service = getServiceUseCase().delete;
+    const { id } = req.params as { id: string };
+
+    const result = await service.handleWithId(id);
+
+    return genericResponseControllerUtil(result, res);
+}
+

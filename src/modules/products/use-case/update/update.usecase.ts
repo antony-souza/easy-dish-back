@@ -45,6 +45,7 @@ export class UpdateProductUseCase implements IUseCase<UpdateProductDto, IUpdateP
             },
             data: {
                 name: dto.name,
+                description: dto.description,
                 tag: dto.tag,
                 imageUrl: imageUrl,
                 price: dto.price,
