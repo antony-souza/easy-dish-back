@@ -1,15 +1,15 @@
 import type { Request, Response } from "express";
 import { genericResponseControllerUtil } from "../../utils/api-response.js";
-import { CreatePreferenceUseCase } from "./use-case/preference/create-preference.usecase.js";
+import { CreatePaymentLinkUseCase } from "./use-case/payment-link/create-payment-link.usecase.js";
 
 export const getServiceUseCase = () => {
     return {
-        createPreference: new CreatePreferenceUseCase(),
+        createPaymentLink: new CreatePaymentLinkUseCase(),
     };
 };
 
-export const createPreference = async (req: Request, res: Response) => {
-    const service = getServiceUseCase().createPreference;
+export const createPaymentLink = async (req: Request, res: Response) => {
+    const service = getServiceUseCase().createPaymentLink;
 
     const result = await service.handle({
         ...req.body,

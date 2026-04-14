@@ -1,20 +1,21 @@
 import { Preference } from "mercadopago";
 import { mercadoPagoClient } from "../../../../config/mercadopago.config.js";
 import { getEnvField } from "../../../../config/env.config.js";
-import type { ICreatePreferenceData, ICreatePreferenceUseCaseResponse } from "./interfaces/preference.interface.js";
 import type { IUseCase } from "../../../../contracts/use-case.contract.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
+import type { ICreatePaymentLinkData, ICreatePaymentLinkUseCaseResponse } from "./interfaces/payment-link.interface.js";
 
-export class CreatePreferenceUseCase implements IUseCase<ICreatePreferenceData, ICreatePreferenceUseCaseResponse> {
+export class CreatePaymentLinkUseCase implements IUseCase<ICreatePaymentLinkData, ICreatePaymentLinkUseCaseResponse> {
   private preference: Preference;
 
   constructor() {
     this.preference = new Preference(mercadoPagoClient);
   }
 
-  async handle(data: ICreatePreferenceData): Promise<IApiResponse<ICreatePreferenceUseCaseResponse>> {
+  async handle(data: ICreatePaymentLinkData): Promise<IApiResponse<ICreatePaymentLinkUseCaseResponse>> {
     try {
       const successUrl = getEnvField.MERCADOPAGO_BACK_URL_SUCCESS;
+      const expirationDate = new Date(Date.now() + 30 * 60 * 1000).toISOString();
 
       const checkout = await this.preference.create({
         body: {
@@ -28,7 +29,7 @@ export class CreatePreferenceUseCase implements IUseCase<ICreatePreferenceData, 
             },
           ],
           payer: {
-            email: data.email,
+            email: data.payerEmail,
           },
           back_urls: {
             success: successUrl,
@@ -37,6 +38,12 @@ export class CreatePreferenceUseCase implements IUseCase<ICreatePreferenceData, 
           },
           auto_return: "approved",
           notification_url: getEnvField.MERCADOPAGO_NOTIFICATION_URL,
+          payment_methods: {
+            excluded_payment_types: [],
+            excluded_payment_methods: [],
+            installments: 12,
+          },
+          date_of_expiration: expirationDate,
         },
       });
 
@@ -52,7 +59,7 @@ export class CreatePreferenceUseCase implements IUseCase<ICreatePreferenceData, 
       return {
         data: {
           id: checkout.id,
-          initPoint: checkout.init_point,
+          paymentLink: checkout.init_point,
         },
         message: "Preferencia criada com sucesso",
         statusCode: 201,
