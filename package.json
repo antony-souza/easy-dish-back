@@ -4,7 +4,9 @@
     "dev": "env-cmd -f .env tsx watch src/main.ts",
     "prod": "env-cmd -f .env.prod tsx watch src/main.ts",
     "build": "tsc && npx prisma generate",
-    "start": "node dist/main.js"
+    "start": "node dist/main.js",
+    "docker-up": "docker compose -f docker-compose.yml --env-file .env -p easy_dish up -d --build",
+    "docker-down": "docker compose -f docker-compose.yml --env-file .env -p easy_dish down"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1025.0",
