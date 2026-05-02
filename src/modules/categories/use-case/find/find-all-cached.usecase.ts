@@ -31,7 +31,9 @@ export class FindAllCategoriesCachedUseCase implements IUseCase<void, IFindAllCa
             },
             select: {
                 id: true,
-                name: true,
+                name: true, 
+                tag: true,
+                imageUrl: true,
             },
             orderBy: {
                 createdAt: "desc",

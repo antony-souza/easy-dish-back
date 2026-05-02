@@ -99,7 +99,7 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserDto, IUpdateUserUse
             return;
         });
 
-        await cache.del(`${this.cacheKey}-${dto.userId}`);
+        await cache.del(`${this.cacheKey}-${userId}`);
 
         return {
             data: [],

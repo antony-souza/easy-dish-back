@@ -14,10 +14,14 @@ export interface IUpdateCategoryIdsParamsUseCase {
     categoryId: string;
     companyId: string;
 }
-export class UpdateCategoryUseCase implements IUseCase<UpdateCategoryDto, IUpdateCategoryUseCaseResponse> {
+export class UpdateCategoryUseCase
+    implements IUseCase<UpdateCategoryDto, IUpdateCategoryUseCaseResponse> {
     private cacheKey = cacheKeysUtils.categoriesAll;
 
-    async handleWithIds(paramsIds: IUpdateCategoryIdsParamsUseCase, dto: UpdateCategoryDto): Promise<IApiResponse<IUpdateCategoryUseCaseResponse>> {
+    async handleWithIds(
+        paramsIds: IUpdateCategoryIdsParamsUseCase,
+        dto: UpdateCategoryDto
+    ): Promise<IApiResponse<IUpdateCategoryUseCaseResponse>> {
         const cache = new CacheService();
 
         const existsCategory = await prisma.category.findUnique({

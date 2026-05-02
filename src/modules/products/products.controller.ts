@@ -33,7 +33,7 @@ export const findAll = async (req: Request, res: Response) => {
 export const create = async (req: Request, res: Response) => {
     const service = getServiceUseCase().create;
 
-    const result = await service.handleWithId(req.user!.companyId, {
+    const result = await service.handleWithId(req.user!.companyId!, {
         ...req.body,
         photo: req.file,
     });
