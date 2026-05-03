@@ -3,7 +3,7 @@ export interface IMyInfoUseCaseResponse {
     fullName: string; 
     avatarUrl: string | null;
     email: string;
-    isVerified: boolean
+    isVerified: boolean | null
     phone: string | null;
     cpf: string | null;
     role: {
