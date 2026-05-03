@@ -28,6 +28,7 @@ export class MyInfoUseCase implements IUseCase<string, IMyInfoUseCaseResponse> {
                 id: true,
                 fullName: true,
                 email: true,
+                isVerified: true,
                 phone: true,
                 avatarUrl: true,
                 cpf: true,
