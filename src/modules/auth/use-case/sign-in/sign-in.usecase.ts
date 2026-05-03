@@ -6,6 +6,7 @@ import { prisma } from "../../../../config/prisma.connect.js";
 import type { IUseCase } from "../../../../contracts/use-case.contract.js";
 import type { ISignInResponse } from "./interfaces/sign-in.interface.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
+import { generateAlphanumeric } from "../../../../utils/generateAlphanumericString.js";
 
 export class SignInServiceUseCase implements IUseCase<ISignInSchema, ISignInResponse> {
 
@@ -20,6 +21,7 @@ export class SignInServiceUseCase implements IUseCase<ISignInSchema, ISignInResp
         fullName: true,
         email: true,
         password: true,
+        isVerified: true
       },
     });
 
@@ -29,6 +31,23 @@ export class SignInServiceUseCase implements IUseCase<ISignInSchema, ISignInResp
         message: "Usuário não encontrado",
         statusCode: 404,
         errors: ["Usuário não encontrado"],
+      }
+    }
+
+    if(!user.isVerified) {
+      const code = await prisma.verifyCode.findUnique({
+        where: {
+          userId: user.id
+        }
+      })
+      if(!code) {
+        const generatedCode = generateAlphanumeric()
+        await prisma.verifyCode.create({
+          data: {
+            code: generatedCode,
+            userId: user.id
+          }
+        })
       }
     }
 

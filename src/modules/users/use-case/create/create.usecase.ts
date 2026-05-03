@@ -3,6 +3,7 @@ import type { CreateUserDto } from "./schema/create.schema.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
 import { hash } from "bcrypt";
+import { generateAlphanumeric } from "../../../../utils/generateAlphanumericString.js";
 
 interface ICreateUserUseCaseResponse {
     id: string;
@@ -45,7 +46,6 @@ export class CreateUserUseCase implements IUseCase<CreateUserDto, ICreateUserUse
                 }
             }
         }
-
         await prisma.$transaction(async (tx) => {
             const user = await tx.user.create({
                 data: {
@@ -76,6 +76,14 @@ export class CreateUserUseCase implements IUseCase<CreateUserDto, ICreateUserUse
                     },
                 });
             }
+            
+            const generatedCode = generateAlphanumeric()
+            await tx.verifyCode.create({
+                data: {
+                    code: generatedCode,
+                    userId: user.id
+                }
+            })
 
             return;
         });
