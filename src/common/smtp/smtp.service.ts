@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import { getEnvField } from "../../config/env.config.js";
 
-export interface SendMailOptions {
+export interface ISendMailOptions {
     to: string;
     subject: string;
     text?: string;
@@ -23,7 +23,7 @@ export class SmtpService {
         });
     }
 
-    async sendMail(options: SendMailOptions): Promise<void> {
+    async sendMail(options: ISendMailOptions): Promise<void> {
         await this.transporter.sendMail({
             from: getEnvField.SMTP_USER,
             to: options.to,
