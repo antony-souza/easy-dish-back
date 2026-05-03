@@ -1,10 +1,10 @@
 {
   "type": "module",
   "scripts": {
-    "dev": "env-cmd -f .env.dev tsx watch src/main.ts",
-    "prod": "env-cmd -f .env.prod tsx watch src/main.ts",
+    "dev": "env-cmd -f .env.dev tsx watch src/bootstrap.ts",
+    "prod": "env-cmd -f .env.prod tsx watch src/bootstrap.ts",
     "build": "tsc && npx prisma generate",
-    "start": "node dist/main.js",
+    "start": "node dist/bootstrap.js",
     "docker-up": "docker compose -f docker-compose.yml --env-file .env -p easy_dish up -d --build",
     "docker-down": "docker compose -f docker-compose.yml --env-file .env -p easy_dish down"
   },
@@ -12,6 +12,7 @@
     "@aws-sdk/client-s3": "^3.1025.0",
     "@prisma/adapter-pg": "^7.4.0",
     "@prisma/client": "^7.4.0",
+    "amqplib": "^1.0.3",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/amqplib": "^0.10.8",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",

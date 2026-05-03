@@ -2,8 +2,9 @@ import express from 'express';
 import { apiRoutes } from './routes.js';
 import { getEnvField } from './config/env.config.js';
 import cors from 'cors';
+import { startBootstrapUtils } from './bootstrap-utils.js';
 
-export function main() {
+export async function bootstrap() {
     const app = express();
 
     app.use(express.json());
@@ -12,6 +13,8 @@ export function main() {
         origin: getEnvField.FRONTEND_URL,
     }));
 
+    await startBootstrapUtils();
+
     app.use('/api', apiRoutes);
 
     app.listen({ host: getEnvField.HOST, port: getEnvField.PORT }, () => {
@@ -19,4 +22,4 @@ export function main() {
     });
 }
 
-main();
+bootstrap();
