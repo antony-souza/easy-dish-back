@@ -11,3 +11,5 @@ verifyCodeRoutes.post("/verify",
     verifyCodeController.verify
 );
 
+verifyCodeRoutes.post('/resend', verifyCodeController.resend)
+
