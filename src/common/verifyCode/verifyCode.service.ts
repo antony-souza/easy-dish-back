@@ -30,10 +30,10 @@ export class VerifyCodeService {
 
 	static async verifyCode(code?: string, verifyCodeId?: string) {
 		if (code) {
-			await this.verifyCodeByCode(code)
+			return await this.verifyCodeByCode(code)
 		}
 		if (verifyCodeId) {
-			await this.verifyCodeById(verifyCodeId)
+			return await this.verifyCodeById(verifyCodeId)
 		}
 	}
 
@@ -46,7 +46,7 @@ export class VerifyCodeService {
 		})
 
 		if (verifyCode) {
-			await this.updateUserAfterCodeVerification(
+			return await this.updateUserAfterCodeVerification(
 				verifyCode.userId,
 				verifyCode.id,
 			)
@@ -61,7 +61,7 @@ export class VerifyCodeService {
 		})
 
 		if (verifyCode) {
-			await this.updateUserAfterCodeVerification(
+			return await this.updateUserAfterCodeVerification(
 				verifyCode.userId,
 				verifyCode.id,
 			)
@@ -71,8 +71,8 @@ export class VerifyCodeService {
 		userId: string,
 		verifyCodeId: string,
 	) {
-		await prisma.$transaction(async tx => {
-			await tx.verifyCode.update({
+		const [, user] = await prisma.$transaction([
+			prisma.verifyCode.update({
 				where: {
 					id: verifyCodeId,
 					userId: userId,
@@ -81,14 +81,15 @@ export class VerifyCodeService {
 					code: "verified",
 					deletedAt: new Date(),
 				},
-			})
+			}),
 
-			await tx.user.update({
+			prisma.user.update({
 				where: { id: userId },
 				data: {
 					isVerified: true,
 				},
-			})
-		})
+			}),
+		])
+		return user
 	}
 }
