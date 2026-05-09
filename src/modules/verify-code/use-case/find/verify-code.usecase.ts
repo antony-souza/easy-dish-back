@@ -1,15 +1,15 @@
-import type { IUseCase } from "../../../../contracts/use-case.contract.js"
-import type { IApiResponse } from "../../../../utils/api-response.js"
-import { VerifyCodeService } from "../../../../common/verifyCode/verifyCode.service.js"
+import type { IUseCase } from "../../../../contracts/use-case.contract.js";
+import type { IApiResponse } from "../../../../utils/api-response.js";
+import { VerifyCodeService } from "../../../../common/verifyCode/verifyCode.service.js";
 
 interface IVerifyCodeUseCaseResponse {
-	userId: string
+	userId: string;
 }
 
 type VerifyCodeDto = {
-	verifyCodeId?: string
-	code?: string
-}
+	code: string;
+	userId: string;
+};
 
 export class VerifyCodeUseCase implements IUseCase<
 	VerifyCodeDto,
@@ -18,12 +18,18 @@ export class VerifyCodeUseCase implements IUseCase<
 	async handle(
 		dto: VerifyCodeDto,
 	): Promise<IApiResponse<IVerifyCodeUseCaseResponse>> {
-		await VerifyCodeService.verifyCode(dto.code, dto.verifyCodeId)
-		return {
+		const responseData: IApiResponse<IVerifyCodeUseCaseResponse> = {
 			data: [],
-			message: "Usuário verificado com sucesso.",
-			statusCode: 200,
+			message: "Código de verificação incorreto",
+			statusCode: 400,
 			errors: [],
+		};
+		const verify = await VerifyCodeService.verifyCode(dto.code, dto.userId);
+		if (verify?.success) {
+			responseData.statusCode = 200;
+			responseData.message = "Usuário verificado com sucesso.";
 		}
+
+		return responseData;
 	}
 }

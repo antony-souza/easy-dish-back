@@ -1,95 +1,56 @@
-import { prisma } from "../../config/prisma.connect.js"
-import { generateAlphanumeric } from "../../utils/generateAlphanumericString.js"
+import { prisma } from "../../config/prisma.connect.js";
+import { generateAlphanumeric } from "../../utils/generateAlphanumericString.js";
+import { getCacheService } from "../cache/cache.service.js";
+import { cacheKeysUtils } from "../cache/utils/cache-keys.utils.js";
 
 export class VerifyCodeService {
 	static generateRandomCode() {
-		return generateAlphanumeric()
+		return generateAlphanumeric();
 	}
 	static async createNewVerifyCode(userId: string) {
-		const generatedVerifyCode = this.generateRandomCode()
-		await prisma.verifyCode.create({
-			data: {
-				code: generatedVerifyCode,
-				userId: userId,
-			},
-		})
+		const cache = getCacheService();
+		const generatedVerifyCode = this.generateRandomCode();
+		await cache.set(
+			`${cacheKeysUtils.verifyEmail}${userId}`,
+			generatedVerifyCode,
+			300,
+		);
 	}
 
 	static async regenerateUserVerifyCode(userId: string) {
-		const generatedVerifyCode = this.generateRandomCode()
-		const verifyCode = await prisma.verifyCode.update({
-			where: {
-				userId: userId,
-			},
+		const cache = getCacheService();
+		const generatedVerifyCode = this.generateRandomCode();
+		await cache.set(
+			`${cacheKeysUtils.verifyEmail}${userId}`,
+			generatedVerifyCode,
+			300,
+		);
+		return generatedVerifyCode;
+	}
+
+	static async verifyCode(code: string, userId: string) {
+		return await this.verifyCodeOnCache(code, userId);
+	}
+
+	private static async verifyCodeOnCache(code: string, userId: string) {
+		const cache = getCacheService();
+		const storedCode = await cache.get<string>(
+			`${cacheKeysUtils.verifyEmail}${userId}`,
+		);
+		if (storedCode !== code) {
+			return;
+		}
+		await this.updateUserAfterCodeVerification(userId);
+		await cache.del(`${cacheKeysUtils.verifyEmail}${userId}`);
+
+		return { success: true };
+	}
+	private static async updateUserAfterCodeVerification(userId: string) {
+		await prisma.user.update({
+			where: { id: userId },
 			data: {
-				code: generatedVerifyCode,
+				isVerified: true,
 			},
-		})
-		return verifyCode.code
-	}
-
-	static async verifyCode(code?: string, verifyCodeId?: string) {
-		if (code) {
-			return await this.verifyCodeByCode(code)
-		}
-		if (verifyCodeId) {
-			return await this.verifyCodeById(verifyCodeId)
-		}
-	}
-
-	private static async verifyCodeByCode(code: string) {
-		const [verifyCode] = await prisma.verifyCode.findMany({
-			where: {
-				code: code,
-				deletedAt: null,
-			},
-		})
-
-		if (verifyCode) {
-			return await this.updateUserAfterCodeVerification(
-				verifyCode.userId,
-				verifyCode.id,
-			)
-		}
-	}
-	private static async verifyCodeById(codeId: string) {
-		const verifyCode = await prisma.verifyCode.findUnique({
-			where: {
-				id: codeId,
-				deletedAt: null,
-			},
-		})
-
-		if (verifyCode) {
-			return await this.updateUserAfterCodeVerification(
-				verifyCode.userId,
-				verifyCode.id,
-			)
-		}
-	}
-	private static async updateUserAfterCodeVerification(
-		userId: string,
-		verifyCodeId: string,
-	) {
-		const [, user] = await prisma.$transaction([
-			prisma.verifyCode.update({
-				where: {
-					id: verifyCodeId,
-					userId: userId,
-				},
-				data: {
-					code: "verified",
-					deletedAt: new Date(),
-				},
-			}),
-
-			prisma.user.update({
-				where: { id: userId },
-				data: {
-					isVerified: true,
-				},
-			}),
-		])
-		return user
+		});
 	}
 }
