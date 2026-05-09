@@ -1,4 +1,4 @@
-import { CacheService } from "../../../../common/cache/cache.service.js";
+import { getCacheService } from "../../../../common/cache/cache.service.js";
 import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
 import { prisma } from "../../../../config/prisma.connect.js";
 import type { IUseCase } from "../../../../contracts/use-case.contract.js";
@@ -9,7 +9,7 @@ export class MyInfoUseCase implements IUseCase<string, IMyInfoUseCaseResponse> {
     private cacheKey = cacheKeysUtils.myInfo;
 
     async handle(userId: string): Promise<IApiResponse<IMyInfoUseCaseResponse>> {
-        const cache = new CacheService();
+        const cache = getCacheService();
 
         const cachedData = await cache.get<IMyInfoUseCaseResponse>(`${this.cacheKey}-${userId}`);
 

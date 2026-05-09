@@ -1,5 +1,5 @@
 import type { IUseCase } from "../../../../contracts/use-case.contract.js";
-import { CacheService } from "../../../../common/cache/cache.service.js";
+import { getCacheService } from "../../../../common/cache/cache.service.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
 import type { IRoles } from "./find-all.interface.js";
@@ -10,7 +10,7 @@ export class FindAllPublicRolesUseCase implements IUseCase<void, IRoles[]> {
 
     async handle(): Promise<IApiResponse<IRoles[]>> {
 
-        const redis = new CacheService();
+        const redis = getCacheService();
 
         const cachedData = await redis.get<IRoles[]>(this.cacheKey);
 

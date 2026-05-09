@@ -1,14 +1,14 @@
 import { prisma } from "../../../../config/prisma.connect.js";
 import type { IUseCase } from "../../../../contracts/use-case.contract.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
-import { CacheService } from "../../../../common/cache/cache.service.js";
+import { getCacheService } from "../../../../common/cache/cache.service.js";
 import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
 
 export class DeleteCategoryUseCase implements IUseCase<string, null> {
     private cacheKey = cacheKeysUtils.categoriesAll;
 
     async handleWithId(id: string): Promise<IApiResponse<null>> {
-        const cache = new CacheService();
+        const cache = getCacheService();
 
         const existsCategory = await prisma.category.findFirst({
             where: {
