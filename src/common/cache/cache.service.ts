@@ -36,3 +36,12 @@ export class CacheService {
         await this.redis.del(key);
     }
 }
+
+let instance: CacheService | null = null;
+
+export function getCacheService(): CacheService {
+    if (!instance) {
+        instance = new CacheService();
+    }
+    return instance;
+}

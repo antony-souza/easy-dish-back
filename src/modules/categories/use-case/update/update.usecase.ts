@@ -3,7 +3,7 @@ import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
 import type { UpdateCategoryDto } from "./schema/update.schema.js";
 import { uploadService } from "../../../../common/upload/upload.service.js";
-import { CacheService } from "../../../../common/cache/cache.service.js";
+import { getCacheService } from "../../../../common/cache/cache.service.js";
 import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
 
 interface IUpdateCategoryUseCaseResponse {
@@ -22,7 +22,7 @@ export class UpdateCategoryUseCase
         paramsIds: IUpdateCategoryIdsParamsUseCase,
         dto: UpdateCategoryDto
     ): Promise<IApiResponse<IUpdateCategoryUseCaseResponse>> {
-        const cache = new CacheService();
+        const cache = getCacheService();
 
         const existsCategory = await prisma.category.findUnique({
             where: {

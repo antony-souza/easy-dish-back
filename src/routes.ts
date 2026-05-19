@@ -8,6 +8,7 @@ import { needAuthMiddleware } from './middlewares/auth.middleware.js';
 import { categoriesRoutes } from './modules/categories/categories.routes.js';
 import { productsRoutes } from './modules/products/products.routes.js';
 import { paymentRoutes } from './modules/payment/payment.routes.js';
+import { verifyCodeRoutes } from './modules/verify-code/verify-code.routes.js';
 
 export const apiRoutes = Router();
 
@@ -21,3 +22,4 @@ apiRoutes.use('/categories', categoriesRoutes);
 apiRoutes.use('/products', productsRoutes);
 apiRoutes.use('/menu-options', menuOptionsRoutes);
 apiRoutes.use('/payment', paymentRoutes);
+apiRoutes.use('/code', verifyCodeRoutes);

@@ -1,5 +1,5 @@
 import type { IUseCase } from "../../../../contracts/use-case.contract.js";
-import { CacheService } from "../../../../common/cache/cache.service.js";
+import { getCacheService } from "../../../../common/cache/cache.service.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
 import type { IMenuOption } from "./find-all.interface.js";
@@ -10,7 +10,7 @@ export class FindAllMenuOptionsUseCase implements IUseCase<string, IMenuOption[]
 
     async handle(roleId: string): Promise<IApiResponse<IMenuOption[]>> {
 
-        const redis = new CacheService();
+        const redis = getCacheService();
 
         const cacheKey = this.cacheKey + `:${roleId}`;
 

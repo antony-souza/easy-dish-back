@@ -4,14 +4,14 @@ import type { Category } from "../../../../generated/prisma/client.js";
 import { prisma } from "../../../../config/prisma.connect.js";
 import type { CreateCategoryDto } from "./schema/create.schema.js";
 import { uploadService } from "../../../../common/upload/upload.service.js";
-import { CacheService } from "../../../../common/cache/cache.service.js";
+import { getCacheService } from "../../../../common/cache/cache.service.js";
 import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
 
 export class CreateCategoryUseCase implements IUseCase<CreateCategoryDto, Category> {
     private cacheKey = cacheKeysUtils.categoriesAll;
 
     async handleWithId(companyId: string, dto: CreateCategoryDto): Promise<IApiResponse<Category>> {
-        const cache = new CacheService();
+        const cache = getCacheService();
 
         const existsCompany = await prisma.company.count({
             where: {

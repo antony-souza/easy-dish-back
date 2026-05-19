@@ -3,14 +3,14 @@ import type { MenuOption } from "../../../../generated/prisma/client.js";
 import type { CreateMenuOptionDto } from "./schema/create-menu-option.schema.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
-import { CacheService } from "../../../../common/cache/cache.service.js";
+import { getCacheService } from "../../../../common/cache/cache.service.js";
 import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
 
 export class CreateMenuOptionUseCase implements IUseCase<CreateMenuOptionDto, MenuOption[]> {
     private cacheKey = cacheKeysUtils.menuOptions;
 
     async handle(dto: CreateMenuOptionDto): Promise<IApiResponse<MenuOption[]>> {
-        const redis = new CacheService();
+        const redis = getCacheService();
 
         const slugs = dto.map(d => d.slug);
         const paths = dto.map(d => d.path);

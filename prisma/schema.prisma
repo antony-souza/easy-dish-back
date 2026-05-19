@@ -42,18 +42,19 @@ enum StockMovementType {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  fullName  String    @map("full_name")
-  email     String    @unique
-  phone     String?   @unique
-  cpf       String?   @unique
-  password  String
-  avatarUrl String?   @map("avatar_url")
-  companyId String?   @map("company_id")
-  roleId    String    @map("role_id")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at")
+  id         String    @id @default(uuid())
+  fullName   String    @map("full_name")
+  email      String    @unique
+  isVerified Boolean?  @default(false) @map("is_verified")
+  phone      String?   @unique
+  cpf        String?   @unique
+  password   String
+  avatarUrl  String?   @map("avatar_url")
+  companyId  String?   @map("company_id")
+  roleId     String    @map("role_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
 
   company             Company?             @relation(fields: [companyId], references: [id])
   role                Role                 @relation(fields: [roleId], references: [id])

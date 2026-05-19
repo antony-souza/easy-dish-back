@@ -3,14 +3,14 @@ import type { Role } from "../../../../generated/prisma/client.js";
 import type { CreateRoleDto } from "./schema/create-role.schema.js";
 import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
-import { CacheService } from "../../../../common/cache/cache.service.js";
+import { getCacheService } from "../../../../common/cache/cache.service.js";
 import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
 
 export class CreateRoleUseCase implements IUseCase<CreateRoleDto, Role> {
     private cacheKey = cacheKeysUtils.roles;
 
     async handle(dto: CreateRoleDto): Promise<IApiResponse<Role>> {
-        const redis = new CacheService();
+        const redis = getCacheService();
 
         const existsRole = await prisma.role.count({
             where: {

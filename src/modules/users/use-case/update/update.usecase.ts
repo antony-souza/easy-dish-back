@@ -4,7 +4,7 @@ import type { IApiResponse } from "../../../../utils/api-response.js";
 import { prisma } from "../../../../config/prisma.connect.js";
 import { uploadService } from "../../../../common/upload/upload.service.js";
 import { cacheKeysUtils } from "../../../../common/cache/utils/cache-keys.utils.js";
-import { CacheService } from "../../../../common/cache/cache.service.js";
+import { getCacheService } from "../../../../common/cache/cache.service.js";
 
 interface IUpdateUserUseCaseResponse {
     id: string;
@@ -14,7 +14,7 @@ export class UpdateUserUseCase implements IUseCase<UpdateUserDto, IUpdateUserUse
     private cacheKey = cacheKeysUtils.myInfo;
 
     async handleWithId(userId: string, dto: UpdateUserDto): Promise<IApiResponse<IUpdateUserUseCaseResponse>> {
-        const cache = new CacheService();
+        const cache = getCacheService();
 
         const existsUser = await prisma.user.findUnique({
             where: {
