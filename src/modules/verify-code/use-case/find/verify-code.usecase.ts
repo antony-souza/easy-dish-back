@@ -20,14 +20,20 @@ export class VerifyCodeUseCase implements IUseCase<
 	): Promise<IApiResponse<IVerifyCodeUseCaseResponse>> {
 		const responseData: IApiResponse<IVerifyCodeUseCaseResponse> = {
 			data: [],
-			message: "Código de verificação incorreto",
+			message: "Código incorreto",
 			statusCode: 400,
 			errors: [],
 		};
-		const verify = await VerifyCodeService.verifyCode(dto.code, dto.userId);
-		if (verify?.success) {
-			responseData.statusCode = 200;
-			responseData.message = "Usuário verificado com sucesso.";
+		try {
+			const verify = await VerifyCodeService.verifyCode(dto.code, dto.userId);
+			if (verify?.success) {
+				responseData.statusCode = 200;
+				responseData.message = "Usuário verificado com sucesso.";
+			}
+		} catch (error) {
+			responseData.statusCode = 500;
+			responseData.message = String(error);
+			responseData.errors = [String(error)];
 		}
 
 		return responseData;
