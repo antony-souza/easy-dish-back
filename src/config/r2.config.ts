@@ -3,6 +3,7 @@ import { getEnvField } from "./env.config.js";
 
 const r2 = new S3Client({
   region: "auto",
+  // endpoint: `https://${getEnvField.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${getEnvField.R2_BUCKET_NAME}`,
   endpoint: `https://${getEnvField.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${getEnvField.R2_BUCKET_NAME}`,
   credentials: {
     accessKeyId: getEnvField.R2_ACCESS_KEY_ID,
